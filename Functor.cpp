@@ -21,8 +21,8 @@ class Message {
 class Foo {
   public:
   Foo() {}
-  bool operator() (std::shared_ptr<Message> const& first, std::shared_ptr<Message> const& second) const {
-    return first->getHeader() < second->getHeader();
+  bool operator() (Message const& first, Message const& second) const {
+    return first.getHeader() < second.getHeader();
   }
 };
 
@@ -36,9 +36,10 @@ int main()
   messages.push_back(std::make_shared<Message>("foo4", "hello foo4"));
   
   Foo const foo;
-  std::sort(messages.begin(), messages.end(), foo);
+  //std::sort(messages.begin(), messages.end(), [&](std::shared_ptr<Message> const& left, std::shared_ptr<Message> const& right) { return foo(*left, *right); });
+  std::sort(messages.begin(), messages.end(), [&](auto const& left, auto const& right) { return foo(*left, *right); });
   
-  for(auto const& m : messages) {
+  for(auto m : messages) {
     std::cout << m->getHeader() << std::endl;
   }
 }
