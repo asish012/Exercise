@@ -16,6 +16,12 @@ struct iterator_traits<T*>
     typedef T value_type;
 };
 
+template<>
+struct iterator_traits<int>
+{
+    typedef int value_type;
+};
+
 template <typename T>
 void iterator_swap(T first, T second) {
     typename iterator_traits<T>::value_type temp = *first;
