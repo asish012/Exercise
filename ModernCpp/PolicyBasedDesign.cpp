@@ -70,21 +70,6 @@ public:
 };
 
 
-class A
-{
-public:
-    A() {}
-    ~A() {}
-
-};
-
-class B: public A
-{
-public:
-    B() {}
-    ~B() {}
-
-};
 
 /*
  * Application Code
