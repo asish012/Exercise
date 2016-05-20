@@ -41,10 +41,9 @@ private:
 
 protected:
     ~PrototypeCreator() { delete prototype_; }      /* By making this destructor protected, we disallow dynamic polymorphism.
-                                                    // MyWidgetMgr wm;
-                                                    // OpNewCreator<Widget>* p = &wm;
-                                                    // delete p;    // causes: error: calling a protected destructor
-                                                    */
+                                                     * MyWidgetMgr wm;
+                                                     * OpNewCreator<Widget>* p = &wm;
+                                                     * delete p;    // causes: error: calling a protected destructor */
 };
 
 
@@ -70,19 +69,61 @@ public:
 };
 
 
+/*
+ * Combining Policy Classes
+ *
+ */
+template<class T,
+         template<class> class CheckingPolicy,
+         template<class> class ThreadingModel
+         >
+class SmartPtr : public CheckingPolicy<T>, public ThreadingModel<T> {
+
+public:
+    T* operator->() {
+        typename ThreadingModel<SmartPtr>::Lock guard(*this);
+        CheckingPolicy<T>::Check(_pointee);
+        return _pointee;
+    }
+private:
+    T* _pointee;
+};
+
+template<class T>
+class NoChecking {
+    static void Check(T*) {}
+};
+
+template<class T>
+class EnforceNotNull {
+    class NullPointerException : public std::exception {};
+    static void Check(T* ptr) {
+        if (not ptr) { throw NullPointerException(); }
+    }
+};
+
+template<class T>
+class SingleThreaded {
+};
+
 
 /*
  * Application Code
  *
  */
 int main() {
-    typedef WidgetManager< OpNewCreator > MyWidgetMgr;
+    // Destructor of Policy Classes
+    // {
+    //     typedef WidgetManager< OpNewCreator > MyWidgetMgr;
+    //     MyWidgetMgr wm;
+    //     // MyWidgetMgr* p = new MyWidgetMgr(wm);
+    //     OpNewCreator<Widget>* p = &wm;
+    //     delete p;
+    // }
 
-    {
-        MyWidgetMgr wm;
-        // MyWidgetMgr* p = new MyWidgetMgr(wm);
-        OpNewCreator<Widget>* p = &wm;
-        delete p;
-    }
+    // Combining Policy Classes
+    typedef SmartPtr<Widget, NoChecking, SingleThreaded> WidgetPtr;
+    typedef SmartPtr<Widget, EnforceNotNull, SingleThreaded> SafeWidgetPtr;
+
 
 }
