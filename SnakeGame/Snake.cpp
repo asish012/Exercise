@@ -1,68 +1,82 @@
-#include <iostream>
-#include <string>
-#include <unistd.h>
 #include <ncurses.h>
+#include "Snake.h"
 
-void ncurses_setup() {
-    initscr();
-    // nodelay(stdscr, true);
-    keypad(stdscr, true);
-    curs_set(0);
-    noecho();
-    // getmaxyx(stdscr, height, width);
+Snake::Snake(Point const& startingPosition) : _symbol('x'), _currentDirection(Direction::L) {
+  for (int i = 0; i < 5; ++i) {
+    _body.push_back(Point(startingPosition.getX() + i, startingPosition.getY()));
+  }
 }
 
-void ncurses_end() {
-    getchar();
-    endwin();
+void Snake::update() const {
+  for (Point p: _body)
+  {
+    move(p.getY(), p.getX());
+    addch(_symbol);
+  }
+  refresh();
 }
 
-void stage_setup() {
-    int8_t width(50), height(30);
-    char border = (char)219;
+void Snake::updateDirection(uint16_t direction) {
+  switch (direction) {
+    case KEY_LEFT:
+      if (_currentDirection != Direction::R) {
+        _currentDirection = Direction::L;
+      }
+      break;
 
-    // Draw top border
-    for (int i = 0; i < width; ++i) {
-        move(0, i);
-        addch(border);
-    }
-    // Draw bottom border
-    for (int i = 0; i < width; ++i) {
-        move(height, i);
-        addch(border);
-    }
-    // Draw left border
-    for (int i = 1; i < height; ++i) {
-        move(i, 0);
-        addch(border);
-    }
-    // Draw right border
-    for (int i = 1; i < height; ++i) {
-        move(i, width-1);
-        addch(border);
-    }
+    case KEY_RIGHT:
+      if (_currentDirection != Direction::L) {
+        _currentDirection = Direction::R;
+      }
+      break;
 
-    refresh();
+    case KEY_UP:
+      if (_currentDirection != Direction::D) {
+        _currentDirection = Direction::U;
+      }
+      break;
+
+    case KEY_DOWN:
+      if (_currentDirection != Direction::U) {
+        _currentDirection = Direction::D;
+      }
+      break;
+    default:
+      break;
+  }
 }
 
-void move_snake() {
-    int8_t x(2), y(10);
-    while(getch()) {
-        move(y, ++x);
-        addch((char)219);
-        refresh();
-        usleep(2000000);
-    }
-}
+void Snake::advance(bool consumed) {
+  Point newPosition;
 
-int main()
-{
-    ncurses_setup();
-    stage_setup();
+  switch (_currentDirection) {
+    case Direction::L:
+        newPosition = Point(_body.front().getX() - 1, _body.front().getY());
+      break;
 
-    move_snake();
+    case Direction::R:
+        newPosition = Point(_body.front().getX() + 1, _body.front().getY());
+      break;
 
-    ncurses_end();
+    case Direction::U:
+        newPosition = Point(_body.front().getX(), _body.front().getY() - 1);
+      break;
 
-    return 0;
+    case Direction::D:
+        newPosition = Point(_body.front().getX(), _body.front().getY() + 1);
+      break;
+    default:
+      break;
+  }
+
+
+  mvaddch(newPosition.getY(), newPosition.getX(), _symbol); // add head
+  _body.push_front(Point(newPosition.getX(), newPosition.getY()));
+
+  if (not consumed) {
+    mvaddch(_body.back().getY(), _body.back().getX(), ' ');    // clear tail
+    _body.pop_back();
+  }
+
+  update();
 }
