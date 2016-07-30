@@ -19,7 +19,6 @@ public:
   void update(std::function<void(GameState)> changeGameState); // update with interval
   void addFood();         // addFood '*'
   void keyPressed(uint16_t key);
-  bool checkBorderCollision();
   void score();
 
 private:

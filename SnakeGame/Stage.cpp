@@ -57,8 +57,8 @@ void Stage::addFood() {
   bool conflict = true;
   while (conflict) {
     std::srand(std::time(0));
-    x = std::rand() % (_width - 1) + 1;
-    y = std::rand() % (_height - 1) + 1;
+    x = std::rand() % (_width - 2) + 1;
+    y = std::rand() % (_height - 2) + 1;
 
     for (Point p: _snake.getSnake()) {
       if (p.getX() == x and p.getY() == y) {
@@ -73,46 +73,40 @@ void Stage::addFood() {
 }
 
 void Stage::update(std::function<void(GameState)> changeGameState) {
-  std::deque<Point> const &snake = _snake.getSnake();
-  Point const &head = snake.front();
+  std::deque<Point> const &snakeBody = _snake.getSnake();
+  Point const &nextPosition = _snake.getNextPosition();
 
-  if (head.getX() == _food.getPosition().getX() and
-      head.getY() == _food.getPosition().getY()) {
-    _snake.advance(true);
+  // check boundary
+  if ((nextPosition.getX() >= _width - 1 or nextPosition.getX() <= 0) or
+      (nextPosition.getY() >= _height or nextPosition.getY() <= 0)) {
+    changeGameState(GameState::Stopped);
+    return;
+  }
+
+  // check self hitting
+  for (auto i = snakeBody.begin(); i != snakeBody.end(); ++i) {
+    if (nextPosition.getX() == i->getX() and nextPosition.getY() == i->getY()) {
+      changeGameState(GameState::Stopped);
+      return;
+    }
+  }
+
+  // check food
+  bool consumingFood = false;
+  if (nextPosition.getX() == _food.getPosition().getX() and nextPosition.getY() == _food.getPosition().getY()) {
+    consumingFood = true;
+  }
+
+  _snake.advance(consumingFood);
+
+  if (consumingFood) {
     score();
     addFood();
   }
-  else {
-    _snake.advance(false);
-  }
-
-  // check collision with boundaries
-  if (checkBorderCollision()) {
-    changeGameState(GameState::Stopped);
-  }
-
-  // check self collision
-//  auto i = snake.begin();
-//  if (i != snake.end()) { ++i; }
-//  for (; i != snake.end(); ++i) {
-//    if (head.getX() == i->getX() and head.getY() == i->getY()) {
-//      fp(GameState::Stopped);
-//    }
-//  }
 }
 
 void Stage::keyPressed(uint16_t key) {
   _snake.updateDirection(key);
-}
-
-bool Stage::checkBorderCollision() {
-  Point head = _snake.getSnake().front();
-  if ((head.getX() > 0 and head.getX() < _width) and
-      (head.getY() > 0 and head.getY() < _height)) {
-
-    return false;
-  }
-  return true;
 }
 
 void Stage::score() {

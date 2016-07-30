@@ -11,12 +11,15 @@ public:
   explicit Snake(Point const& startingPosition);
   Direction getDirection() const { return _currentDirection; }
   void update() const;
-  void advance(bool consumed);
+  void advance(bool consumeFood);
   void updateDirection(uint16_t direction);
+  void calculateNextPosition();
+  Point getNextPosition();
   std::deque<Point> getSnake() const { return _body; }
 private:
   std::deque<Point> _body;
   Direction _currentDirection;
+  Point _nextPosition;
   char _symbol;
 };
 

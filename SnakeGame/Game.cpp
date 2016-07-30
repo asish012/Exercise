@@ -2,13 +2,13 @@
 #include <unistd.h>
 #include "Game.h"
 
-Game::Game() : _refreshRate(1 * Second), _foodTimer(25 * Second), _stage(Stage()), _currentState(Stopped) {}
+Game::Game() : _refreshRate(1 * Second), _stage(Stage()), _currentState(Stopped) {}
 
 void Game::start() {
   _currentState = Playing;
   int16_t key;
 
-  while(_currentState != Stopped) {
+  while(true) {
     key = getch();
 
     switch (key) {
@@ -24,6 +24,11 @@ void Game::start() {
     _stage.update([this](GameState state){
       _currentState = state;
     });
+
+    if (_currentState == Stopped) {
+      break;
+    }
+
     tcflush(STDIN_FILENO, TCIFLUSH);  // flush non-transmitted key strokes
     usleep(Second * 0.5);
   }

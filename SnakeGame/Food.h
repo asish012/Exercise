@@ -22,13 +22,6 @@ public:
     return _position;
   }
 
-  void expire() {
-    mvaddch(_position.getY(), _position.getX(), ' ');
-    refresh();
-
-    _position = Point(0, 0);
-  }
-
 private:
   Point _position;
   char _symbol;

@@ -13,7 +13,6 @@ public:
   void start();
 
 private:
-  uint32_t _foodTimer;
   uint32_t _refreshRate;
   Stage _stage;
   GameState _currentState;

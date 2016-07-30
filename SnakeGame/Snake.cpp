@@ -1,10 +1,11 @@
 #include <ncurses.h>
 #include "Snake.h"
 
-Snake::Snake(Point const& startingPosition) : _symbol('x'), _currentDirection(Direction::L) {
+Snake::Snake(Point const& startingPosition) : _symbol('x'), _currentDirection(Direction::L), _nextPosition(Point()) {
   for (int i = 0; i < 5; ++i) {
     _body.push_back(Point(startingPosition.getX() + i, startingPosition.getY()));
   }
+  calculateNextPosition();
 }
 
 void Snake::update() const {
@@ -44,39 +45,47 @@ void Snake::updateDirection(uint16_t direction) {
     default:
       break;
   }
+  calculateNextPosition();
 }
 
-void Snake::advance(bool consumed) {
-  Point newPosition;
-
+void Snake::calculateNextPosition() {
   switch (_currentDirection) {
     case Direction::L:
-        newPosition = Point(_body.front().getX() - 1, _body.front().getY());
+        _nextPosition = Point(_body.front().getX() - 1, _body.front().getY());
       break;
 
     case Direction::R:
-        newPosition = Point(_body.front().getX() + 1, _body.front().getY());
+        _nextPosition = Point(_body.front().getX() + 1, _body.front().getY());
       break;
 
     case Direction::U:
-        newPosition = Point(_body.front().getX(), _body.front().getY() - 1);
+        _nextPosition = Point(_body.front().getX(), _body.front().getY() - 1);
       break;
 
     case Direction::D:
-        newPosition = Point(_body.front().getX(), _body.front().getY() + 1);
+        _nextPosition = Point(_body.front().getX(), _body.front().getY() + 1);
       break;
     default:
       break;
   }
+}
 
+Point Snake::getNextPosition() {
+  return _nextPosition;
+}
 
-  mvaddch(newPosition.getY(), newPosition.getX(), _symbol); // add head
-  _body.push_front(Point(newPosition.getX(), newPosition.getY()));
+void Snake::advance(bool consumeFood) {
+  mvaddch(_nextPosition.getY(), _nextPosition.getX(), _symbol);   // add head
+  _body.push_front(_nextPosition);
 
-  if (not consumed) {
+  if (not consumeFood) {
     mvaddch(_body.back().getY(), _body.back().getX(), ' ');    // clear tail
     _body.pop_back();
   }
 
   update();
+  calculateNextPosition();
 }
+
+
+
