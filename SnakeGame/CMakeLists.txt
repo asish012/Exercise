@@ -9,6 +9,6 @@ file(GLOB SOURCES "*.cpp")
 find_package(Curses REQUIRED)
 include_directories(${CURSES_INCLUDE_DIR})
 
-add_executable(Snake ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_link_libraries(Snake ${CURSES_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${CURSES_LIBRARIES})

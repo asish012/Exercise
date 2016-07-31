@@ -73,21 +73,6 @@ public:
  * Combining Policy Classes
  *
  */
-template<class T,
-         template<class> class CheckingPolicy,
-         template<class> class ThreadingModel
-         >
-class SmartPtr : public CheckingPolicy<T>, public ThreadingModel<T> {
-
-public:
-    T* operator->() {
-        typename ThreadingModel<SmartPtr>::Lock guard(*this);
-        CheckingPolicy<T>::Check(_pointee);
-        return _pointee;
-    }
-private:
-    T* _pointee;
-};
 
 template<class T>
 class NoChecking {
@@ -104,6 +89,47 @@ class EnforceNotNull {
 
 template<class T>
 class SingleThreaded {
+};
+
+
+/*
+ * Customizing Structure with Policy Classes
+ *
+ */
+
+template<class T>
+class DefaultSmartPointerStorage {
+public:
+    typedef T* PointerType;
+    typedef T& ReferenceType;
+
+protected:
+    PointerType GetPointer() { return _pointee; }
+    void SetPointer(PointerType const ptr) { _pointee = ptr; }
+
+private:
+    PointerType _pointee;
+};
+
+
+/*
+ * Library Code
+ *
+ */
+
+template<class T,
+         template<class> class CheckingPolicy,
+         template<class> class ThreadingModel,
+         template<class> class Storage = DefaultSmartPointerStorage
+         >
+class SmartPtr : public CheckingPolicy<T>, public ThreadingModel<T>, public Storage<T> {
+
+public:
+    T* operator->() {
+        typename ThreadingModel<SmartPtr>::Lock guard(*this);
+        CheckingPolicy<T>::Check(_pointee);
+        return _pointee;
+    }
 };
 
 
