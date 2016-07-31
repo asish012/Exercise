@@ -15,6 +15,7 @@ CTestTestfile.cmake
 */build/
 
 # Independent Exercise Executables #
+FunctionSpecialization
 PriorityQueue
 SFINEY
 Stack
