@@ -4,15 +4,15 @@
 #include <sstream>
 #include <vector>
 
-template <typename T>
-std::string to_string_impl(T const& t) {
-  std::stringstream ss;
-  ss << t;
-  return ss.str();
-}
 
 template <typename ... Param>
 std::vector<std::string> to_string(Param const& ... param) {
+  const auto to_string_impl = [](const auto &t) {
+    std::stringstream ss;
+    ss << t;
+    return ss.str();
+  };
+
   return { to_string_impl(param)... };
 }
 
