@@ -5,8 +5,10 @@
 // Client main
 //
 int main(int argc, char **argv) {
-  std::cout << "usage: client <server/ip> <port>\n";
-  if (argc != 3) { return 0; }
+  if (argc != 3) {
+    std::cout << "usage: Client <server/ip> <port>\n";
+    return 0;
+  }
 
   int len = 256;
   std::string message;
@@ -16,14 +18,18 @@ int main(int argc, char **argv) {
   TCPStream *stream = client->connect(argv[1], atoi(argv[2]));
 
   if (stream) {
-    message = "Is there life on Server?";
+    while (true) {
+      std::cout << "write: ";
+      std::cin >> message;
 
-    stream->send(message);
-    std::cout << "sent: " << message << '\n';
+      stream->send(message);
 
-    len = stream->receive(line, line.length());
-    if (len) {
-      std::cout << line << '\n';
+      len = stream->receive(line, line.length());
+      if (len) {
+        std::cout << "server said: " << line << '\n';
+      }
+
+      if (line == "quit" or message == "quit") { break; }
     }
   }
 

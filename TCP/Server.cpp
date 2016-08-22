@@ -6,8 +6,9 @@
 //
 int main(int argc, char** argv) {
 
-  std::cout << "usage: server <port> <server/ip>\n";
-  if (argc < 2 or argc > 4) { return 0; }
+  if (argc != 3) {
+    std::cout << "usual usage: Server <server/ip> <port>\n";
+  }
 
   TCPStream *stream = nullptr;
   TCPServer *server = nullptr;
@@ -16,20 +17,24 @@ int main(int argc, char** argv) {
     server = new TCPServer(std::string(argv[1]), atoi(argv[2]));
   }
   else {
-    server = new TCPServer(std::string(), atoi(argv[1]));
+    server = new TCPServer(std::string("localhost"), 9000);
+    std::cout << "server localhost:9000 has been created\n";
   }
 
   if (server->start() == 0) {
     while (true) {
       stream = server->accept();
 
-      if (stream != nullptr) {
+      if (stream) {
         std::string line(256, '\0');
-        size_t len;
+        std::string outstr;
+        size_t len = 0;
         while ( (len = stream->receive(line, sizeof(line))) > 0 ) {
           std::cout << "server received: " << line << std::endl;
 
-          stream->send("Server says: Fuck-off");
+          std::cout << "write response here: ";
+          std::cin >> outstr;
+          stream->send(outstr);
         }
         delete stream;
       }
