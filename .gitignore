@@ -9,10 +9,16 @@ cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
 
+### Eclipse Project Files ###
+*.cproject
+*.project
+*.settings/
+
 */build-Default/
 */CMakeLists.txt.user
 */build-Default/
 */build/
+*/debug/
 
 # Independent Exercise Executables #
 FunctionSpecialization

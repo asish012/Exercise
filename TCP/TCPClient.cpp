@@ -2,6 +2,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include "TCPClient.h"
+#include <iostream>
 
 TCPStream* TCPClient::connect(std::string const &server, int port) {
   struct sockaddr_in address;
@@ -13,10 +14,11 @@ TCPStream* TCPClient::connect(std::string const &server, int port) {
   if (resolveHostName(server.c_str(), &(address.sin_addr)) != 0) {
     // host_name could not be resolved. thus it is assumed to be an ip address
     // so, copy that value (server) to address.sin_addr
-    inet_pton(PF_INET, server.c_str(), &(address.sin_addr));
+    inet_pton(AF_INET, server.c_str(), &(address.sin_addr));
   }
 
-  int sd = socket(AF_INET, SOCK_STREAM, 0);
+  int sd = ::socket(AF_INET, SOCK_STREAM, 0);
+  std::cout << "client:: sd: " << sd << std::endl;
 
   if (::connect(sd, (struct sockaddr*) &address, sizeof(address)) != 0) {
     return nullptr;
