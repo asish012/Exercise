@@ -1,0 +1,8 @@
+/Debug/
+/build/
+/bin/
+/.settings/
+/.idea/
+*.log
+.cproject
+.project
