@@ -6,7 +6,7 @@ project(Concurrency)
 add_compile_options(-Wall -Wextra -Werror -Wpedantic)
 
 # Use C++11
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -g")
 
 # Set the output folder where your program will be created
 set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/bin)
@@ -17,7 +17,8 @@ include_directories(${PROJECT_SOURCE_DIR}/inc)
 file(GLOB SOURCES
 #        "${PROJECT_SOURCE_DIR}/src/ConditionVariable.cpp"
 #        "${PROJECT_SOURCE_DIR}/src/Async.cpp"
-        "${PROJECT_SOURCE_DIR}/src/AsyncFile.cpp"
+#        "${PROJECT_SOURCE_DIR}/src/AsyncFile.cpp"
+        "${PROJECT_SOURCE_DIR}/src/LambdaObserver.cpp"
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
