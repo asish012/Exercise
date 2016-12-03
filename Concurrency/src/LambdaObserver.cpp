@@ -1,5 +1,3 @@
-//#include "LambdaObserver.h"
-
 #include <iostream>
 #include <functional>
 #include <vector>
@@ -17,16 +15,14 @@ public:
     operator std::function<void(Arg...)>() {
         int callbackId = raiseCounter();
         _callbackIds.emplace(callbackId);
-//        std::cout << "callback registered, current _callbackIds.size()=" << _callbackIds.size() << '\n';
 
         return [wObserver = std::weak_ptr<Observer<Arg...>>{this->shared_from_this()}, callbackId](Arg ...arg){
+            std::cout << "callback Dregister: " << callbackId << '\n';
             std::shared_ptr<Observer<Arg...>> sObserver = wObserver.lock();
             if (sObserver) {
-                sObserver->_parameters.push_back(std::make_tuple(arg...));
-                sObserver->notify(callbackId);
-
-//                std::lock_guard<std::mutex> locker(Mutex);
-                std::cout << "callback Dregistered " << callbackId << '\n';
+                    std::lock_guard<std::mutex> locker(Mutex);
+                    sObserver->_parameters.push_back(std::make_tuple(arg...));
+                    sObserver->notify(callbackId);
             }
             else {
                 std::cout << "Observer is not alive anymore\n";
@@ -39,7 +35,6 @@ public:
     }
 
     void callFinishHandler() {
-//        std::lock_guard<std::mutex> locker(Mutex);
         std::cout << "callback remains: " << _callbackIds.size() << '\n';
         if (_callbackIds.empty() and _started and _finishHandler) {
             _finishHandler(_parameters);
@@ -66,9 +61,7 @@ public:
     bool _started{false};
 };
 
-
-/*---------------------------------------------------------------*/
-
+/* ------------------------------------------------------------------ */
 
 void async(int x, const std::function<void(const std::string &)> &callback) {
     std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -82,12 +75,11 @@ int main() {
     std::vector<std::future<void>> futures;
 
     observer->setFinishHandler([](std::vector<std::tuple<int, std::string>> parameters){
-//        std::lock_guard<std::mutex> locker(Mutex);
         int numberOfCalls(0);
         std::string s;
         for(auto i : parameters) {
             numberOfCalls += std::get<0>(i);
-            s += std::get<1>(i) + "->";
+            s += std::get<1>(i) + "+";
         }
         std::cout << "finished::(" << parameters.size() << ")callbacks.\n" << "result:: " << s << '\n';
     });
