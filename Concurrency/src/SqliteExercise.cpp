@@ -1,8 +1,11 @@
 #include <iostream>
 #include "SqliteExercise.h"
+#include "Logger.h"
+
 
 int main() {
 
-    std::cout << "sqlite exec\n";
+    logDebug() << "sqlite exec\n";
+
     return 0;
 }
