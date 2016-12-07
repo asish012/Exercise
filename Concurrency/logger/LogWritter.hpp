@@ -5,13 +5,14 @@
  *     Author:
  */
 
-#ifndef LOGPOLICYCONSOLE_H_
-#define LOGPOLICYCONSOLE_H_
+#ifndef LOGWRITTER_H_
+#define LOGWRITTER_H_
 
-#include "LogPolicy.h"
-#include <unistd.h>
+#include "LogPolicy.hpp"
+
 #include <fstream>
 #include <mutex>
+#include <unistd.h>
 
 /*
  * ConsoleLogger
@@ -70,4 +71,4 @@ private:
     std::string _fileName{"Log.txt"};
 };
 
-#endif /* LOGPOLICYCONSOLE_H_ */
+#endif /* LOGWRITTER_H_ */

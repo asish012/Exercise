@@ -8,7 +8,7 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
-#include "LogWritter.h"
+#include "LogWritter.hpp"
 
 /*
  * TIPS: Truncate only the file name (not the full path) from __FILE__

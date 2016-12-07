@@ -8,10 +8,10 @@
 #ifndef LOGPOLICY_H_
 #define LOGPOLICY_H_
 
-#include <iostream>
-#include <sstream>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
 
 class LogPolicy
 {

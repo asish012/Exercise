@@ -1,6 +1,6 @@
 #include <iostream>
 #include "SqliteExercise.h"
-#include "Logger.h"
+#include "Logger.hpp"
 
 
 int main() {
