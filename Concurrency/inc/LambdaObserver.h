@@ -8,6 +8,8 @@
 #include <sstream>
 #include <future>
 
+#include "Logger.hpp"
+
 std::mutex Mutex;
 
 template <typename ...Arg>
@@ -18,19 +20,17 @@ public:
     operator std::function<void(Arg...)>() {
         int callbackId = raiseCounter();
         _callbackIds.emplace(callbackId);
-//        std::cout << "callback registered, current _callbackIds.size()=" << _callbackIds.size() << '\n';
 
         return [wObserver = std::weak_ptr<Observer<Arg...>>{this->shared_from_this()}, callbackId](Arg ...arg){
+            logDebug() << "callback Dregister: " << callbackId;
             std::shared_ptr<Observer<Arg...>> sObserver = wObserver.lock();
             if (sObserver) {
+                std::lock_guard<std::mutex> locker(Mutex);
                 sObserver->_parameters.push_back(std::make_tuple(arg...));
                 sObserver->notify(callbackId);
-
-//                std::lock_guard<std::mutex> locker(Mutex);
-                std::cout << "callback Dregistered " << callbackId << '\n';
             }
             else {
-                std::cout << "Observer is not alive anymore\n";
+                logDebug() << "Observer is not alive anymore";
             }
         };
     }
@@ -40,8 +40,7 @@ public:
     }
 
     void callFinishHandler() {
-//        std::lock_guard<std::mutex> locker(Mutex);
-        std::cout << "callback remains: " << _callbackIds.size() << '\n';
+        logDebug() << "callback remains: " << _callbackIds.size();
         if (_callbackIds.empty() and _started and _finishHandler) {
             _finishHandler(_parameters);
         }

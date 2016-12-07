@@ -1,0 +1,2 @@
+|DEBUG	|2016-12-07 20:47:34|src/SqliteExercise.cpp:9:main: sqlite exec
+

@@ -14,6 +14,9 @@ SET(CMAKE_BUILD_TYPE Debug)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # set(LIBRARY_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/lib)
 
+file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/log)
+add_definitions(-DDIR_LOG="${CMAKE_SOURCE_DIR}/log")
+
 include_directories(${PROJECT_SOURCE_DIR}/inc)
 include_directories(${PROJECT_SOURCE_DIR}/logger)
 
@@ -21,8 +24,7 @@ file(GLOB SOURCES
 #        "${PROJECT_SOURCE_DIR}/src/ConditionVariable.cpp"
 #        "${PROJECT_SOURCE_DIR}/src/Async.cpp"
 #        "${PROJECT_SOURCE_DIR}/src/AsyncFile.cpp"
-#        "${PROJECT_SOURCE_DIR}/src/LambdaObserver.cpp"
-        "${PROJECT_SOURCE_DIR}/src/SqliteExercise.cpp"
+        "${PROJECT_SOURCE_DIR}/src/LambdaObserver.cpp"
         )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
