@@ -13,6 +13,12 @@
 #include <iostream>
 #include <sstream>
 
+
+#ifndef UNUSED
+#define UNUSED __attribute__((unused))
+#endif
+
+
 class LogPolicy
 {
 public:

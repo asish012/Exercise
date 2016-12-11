@@ -31,7 +31,7 @@ public:
         std::lock_guard<std::mutex> lockguard(_mutex);
         _buffer << '\n';
         std::string log = _buffer.str();
-        write(STDOUT_FILENO, log.c_str(), log.size());
+        UNUSED size_t success = write(STDOUT_FILENO, log.c_str(), log.size());
     }
 
 private:
