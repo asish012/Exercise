@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-project(Concurrency)
+project(sqliteExercise)
 
 set(CMAKE_CXX_COMPILER /usr/bin/g++)
 add_compile_options(-Wall -Wextra -Werror -Wpedantic)
 
 set(FILENAME_DEDUCTION_FLAG "-D__FILENAME__='\"$(subst ${CMAKE_SOURCE_DIR}/,,$(abspath $<))\"'")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FILENAME_DEDUCTION_FLAG}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -g -O1")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
 
 SET(CMAKE_BUILD_TYPE Debug)
