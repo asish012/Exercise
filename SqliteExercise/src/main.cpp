@@ -3,11 +3,6 @@
 #include "Logger.hpp"
 #include <sqlite3.h>
 
-sqlite3 *db = nullptr;
-char *error = nullptr;
-int success = 0;
-const std::string database = "exercise.db";
-
 int callback(UNUSED void *NotUsed, int numberOfRows, char **values, char **columnName) {
     logDebug() << "Callback with" << numberOfRows << "result(s)";
     int i;

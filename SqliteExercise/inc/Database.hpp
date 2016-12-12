@@ -15,9 +15,10 @@ public:
 
 private:
     std::string _fileName;
-    int _success = 0;
+    int _result = 0;
     char *_error = nullptr;
-    sqlite3 *_database = nullptr;
+    sqlite3_stmt *_stmt     = nullptr;
+    sqlite3      *_database = nullptr;
 };
 
 #endif //DATABASE_H
