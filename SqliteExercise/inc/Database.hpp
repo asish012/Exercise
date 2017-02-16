@@ -3,6 +3,8 @@
 #include "Logger.hpp"
 #include <sqlite3.h>
 
+namespace litedb {
+
 class Database {
 public:
     explicit Database(const std::string &fileName);
@@ -20,3 +22,5 @@ private:
     sqlite3_stmt *stmt_ = nullptr;
     sqlite3      *db_   = nullptr;
 };
+
+} // litedb

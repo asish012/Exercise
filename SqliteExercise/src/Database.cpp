@@ -1,5 +1,7 @@
 #include "Database.hpp"
 
+namespace {
+
 const static std::string studentsSchema = " DROP TABLE IF EXISTS Students;"
                                           " CREATE TABLE IF NOT EXISTS Students("
                                           " id INT NOT NULL PRIMARY KEY,"
@@ -14,6 +16,9 @@ const static std::string insertStudent1 = " INSERT INTO Students(id, first_name,
 
 const static std::string insertStudent2 = " INSERT INTO Students(id, first_name, last_name, email, phone)"
                                          " VALUES(124, 'Victor', 'Hugo', 'vhugo@gmail.com', '54321');";
+} // namespace
+
+namespace litedb {
 
 Database::Database(const std::string &fileName) : fileName_(fileName)
 {
@@ -105,3 +110,5 @@ void Database::execute(const std::string &query, UNUSED int (*callback)(void*,in
         logError() << "Couldn't execute query:" << error_;
     }
 }
+
+} // litedb

@@ -13,7 +13,7 @@ int callback(UNUSED void *NotUsed, int numberOfColumns, char **values, char **co
 }
 
 int main() {
-    Database database("exercise.db");
+    litedb::Database database("exercise.db");
 
     database.execute("SELECT * FROM Students;");
     // database.execute("SELECT * FROM Students;", callback);
