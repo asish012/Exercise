@@ -8,21 +8,23 @@ const static std::string studentsSchema = " DROP TABLE IF EXISTS Students;"
                                           " email text NOT NULL UNIQUE,"
                                           " phone text NOT NULL UNIQUE"
                                           ");";
+
 const static std::string insertStudent1 = " INSERT INTO Students(id, first_name, last_name, email, phone)"
                                          " VALUES(123, 'David', 'Beckham', 'beckham@gmail.com', '12345');";
+
 const static std::string insertStudent2 = " INSERT INTO Students(id, first_name, last_name, email, phone)"
                                          " VALUES(124, 'Victor', 'Hugo', 'vhugo@gmail.com', '54321');";
 
-Database::Database(const std::string &fileName) : _fileName(fileName)
+Database::Database(const std::string &fileName) : fileName_(fileName)
 {
-    _result = sqlite3_open_v2(_fileName.c_str(),
-                               &_database,
+    result_ = sqlite3_open_v2(fileName_.c_str(),
+                               &db_,
                                SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX,
                                NULL);
 
-    if (_result != SQLITE_OK) {
-        logError() << "couldn't open database (" << _fileName << ')' << sqlite3_errmsg(_database);
-        sqlite3_close(_database);
+    if (result_ != SQLITE_OK) {
+        logError() << "couldn't open database (" << fileName_ << ')' << sqlite3_errmsg(db_);
+        sqlite3_close(db_);
     }
 
     // TODO: Schema creation should be operated with configuration file
@@ -34,17 +36,17 @@ Database::Database(const std::string &fileName) : _fileName(fileName)
 
 Database::~Database()
 {
-    _result = sqlite3_close(_database);
-    if (_result != SQLITE_OK) {
-        logError() << "couldn't close database (" << _fileName << ") properly:" << sqlite3_errmsg(_database);
+    result_ = sqlite3_close(db_);
+    if (result_ != SQLITE_OK) {
+        logError() << "couldn't close database (" << fileName_ << ") properly:" << sqlite3_errmsg(db_);
     }
 }
 
 bool Database::createSchema(const std::string &schema)
 {
-    _result = sqlite3_exec(_database, schema.c_str(), nullptr, nullptr, &_error);
-    if (_result != SQLITE_OK) {
-        logError() << "Couldn't create schema:" << sqlite3_errmsg(_database);
+    result_ = sqlite3_exec(db_, schema.c_str(), nullptr, nullptr, &error_);
+    if (result_ != SQLITE_OK) {
+        logError() << "Couldn't create schema:" << sqlite3_errmsg(db_);
         return false;
     }
 
@@ -53,9 +55,9 @@ bool Database::createSchema(const std::string &schema)
 
 bool Database::insert(const std::string &query)
 {
-    _result = sqlite3_exec(_database, query.c_str(), nullptr, nullptr, &_error);
-    if (_result != SQLITE_OK) {
-        logError() << "Couldn't execute insert query:" << _error;
+    result_ = sqlite3_exec(db_, query.c_str(), nullptr, nullptr, &error_);
+    if (result_ != SQLITE_OK) {
+        logError() << "Couldn't execute insert query:" << error_;
         return false;
     }
     return true;
@@ -64,43 +66,42 @@ bool Database::insert(const std::string &query)
 void Database::execute(const std::string &query)
 {
     logInfo() << "Query with prepare->step->finalize";
-    _result = sqlite3_prepare_v2(_database, query.c_str(), -1, &_stmt, nullptr);
-    if (_result != SQLITE_OK) {
-        logError() << "Couldn't prepare query:" << sqlite3_errmsg(_database);
+    result_ = sqlite3_prepare_v2(db_, query.c_str(), -1, &stmt_, nullptr);
+    if (result_ != SQLITE_OK) {
+        logError() << "Couldn't prepare query:" << sqlite3_errmsg(db_);
     }
 
-    while ((_result = sqlite3_step(_stmt)) == SQLITE_ROW) {
-        int columns = sqlite3_column_count(_stmt);
+    while ((result_ = sqlite3_step(stmt_)) == SQLITE_ROW) {
+        int columns = sqlite3_column_count(stmt_);
         for (int i = 0; i < columns; ++i) {
-            switch (sqlite3_column_type(_stmt, i)) {
+            switch (sqlite3_column_type(stmt_, i)) {
                 case SQLITE_INTEGER:
-                    logInfo() << sqlite3_column_name(_stmt, i) << ":" << sqlite3_column_int(_stmt, i);
+                    logInfo() << sqlite3_column_name(stmt_, i) << ":" << sqlite3_column_int(stmt_, i);
                     break;
                 case SQLITE_FLOAT:
-                    logInfo() << sqlite3_column_name(_stmt, i) << ":" << sqlite3_column_double(_stmt, i);
+                    logInfo() << sqlite3_column_name(stmt_, i) << ":" << sqlite3_column_double(stmt_, i);
                     break;
                 case SQLITE_BLOB:
-                    logInfo() << sqlite3_column_name(_stmt, i) << ":" << sqlite3_column_blob(_stmt, i);
+                    logInfo() << sqlite3_column_name(stmt_, i) << ":" << sqlite3_column_blob(stmt_, i);
                     break;
                 case SQLITE_TEXT:
-                    logInfo() << sqlite3_column_name(_stmt, i) << ":" << sqlite3_column_text(_stmt, i);
+                    logInfo() << sqlite3_column_name(stmt_, i) << ":" << sqlite3_column_text(stmt_, i);
                     break;
                 case SQLITE_NULL:
                     logWarn() << "Column Type NULL";
-                    logInfo() << sqlite3_column_name(_stmt, i) << ":" << sqlite3_column_text(_stmt, i);
+                    logInfo() << sqlite3_column_name(stmt_, i) << ":" << sqlite3_column_text(stmt_, i);
                     break;
             }
-
         }
     }
-    sqlite3_finalize(_stmt);
+    sqlite3_finalize(stmt_);
 }
 
 void Database::execute(const std::string &query, UNUSED int (*callback)(void*,int,char**,char**))
 {
     logDebug() << "Query with exec";
-    _result = sqlite3_exec(_database, query.c_str(), callback, nullptr, &_error);
-    if (_result != SQLITE_OK) {
-        logError() << "Couldn't execute query:" << _error;
+    result_ = sqlite3_exec(db_, query.c_str(), callback, nullptr, &error_);
+    if (result_ != SQLITE_OK) {
+        logError() << "Couldn't execute query:" << error_;
     }
 }
