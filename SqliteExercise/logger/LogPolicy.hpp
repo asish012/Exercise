@@ -41,7 +41,7 @@ protected:
     }
 
     void addHeader(const std::string type, const std::string &fileName, const int lineNumber, const std::string &functionName) {
-        _buffer << '|' << type << "\t|" << logTime() << '|' << fileName << ':' << lineNumber << ':' << functionName << ':';
+        _buffer << '|' << type << "\t|" << logTime() << "| " << fileName << ':' << lineNumber << ": " << functionName << ':';
     }
 
     std::stringstream _buffer;
