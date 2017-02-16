@@ -11,6 +11,7 @@ public:
 
     bool createSchema(const std::string &schema);
     bool insert(const std::string &query);
+    void execute(const std::string &query);
     void execute(const std::string &query, int (*callback)(void*,int,char**,char**));
 
 private:

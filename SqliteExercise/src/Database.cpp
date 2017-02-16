@@ -61,14 +61,8 @@ bool Database::insert(const std::string &query)
     return true;
 }
 
-void Database::execute(const std::string &query, UNUSED int (*callback)(void*,int,char**,char**))
+void Database::execute(const std::string &query)
 {
-    logDebug() << "Query with exec";
-    _result = sqlite3_exec(_database, query.c_str(), callback, nullptr, &_error);
-    if (_result != SQLITE_OK) {
-        logError() << "Couldn't execute query:" << _error;
-    }
-
     logInfo() << "Query with prepare->step->finalize";
     _result = sqlite3_prepare_v2(_database, query.c_str(), -1, &_stmt, nullptr);
     if (_result != SQLITE_OK) {
@@ -100,4 +94,13 @@ void Database::execute(const std::string &query, UNUSED int (*callback)(void*,in
         }
     }
     sqlite3_finalize(_stmt);
+}
+
+void Database::execute(const std::string &query, UNUSED int (*callback)(void*,int,char**,char**))
+{
+    logDebug() << "Query with exec";
+    _result = sqlite3_exec(_database, query.c_str(), callback, nullptr, &_error);
+    if (_result != SQLITE_OK) {
+        logError() << "Couldn't execute query:" << _error;
+    }
 }
