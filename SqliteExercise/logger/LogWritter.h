@@ -5,10 +5,9 @@
  *     Author:
  */
 
-#ifndef LOGWRITTER_H_
-#define LOGWRITTER_H_
+#pragma once
 
-#include "LogPolicy.hpp"
+#include "LogPolicy.h"
 
 #include <fstream>
 #include <mutex>
@@ -70,5 +69,3 @@ public:
 private:
     std::string _fileName{"Log.txt"};
 };
-
-#endif /* LOGWRITTER_H_ */

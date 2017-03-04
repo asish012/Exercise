@@ -5,8 +5,7 @@
  *     Author:
  */
 
-#ifndef LOGPOLICY_H_
-#define LOGPOLICY_H_
+#pragma once
 
 #include <ctime>
 #include <iomanip>
@@ -53,5 +52,3 @@ public:
         return *this;
     }
 };
-
-#endif /* LOGPOLICY_H_ */

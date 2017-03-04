@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Logger.hpp"
+#include "Logger.h"
 #include <sqlite3.h>
 
 namespace litedb {
@@ -14,6 +14,7 @@ public:
     bool insert(const std::string &query);
     void execute(const std::string &query);
     void execute(const std::string &query, int (*callback)(void*,int,char**,char**));
+    // void execute(const std::string &query, std::function<int (void*, int, char**, char**)> callback);
 
 private:
     std::string fileName_;

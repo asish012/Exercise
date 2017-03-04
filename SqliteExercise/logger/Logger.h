@@ -5,10 +5,9 @@
  *     Author:
  */
 
-#ifndef LOGGER_H_
-#define LOGGER_H_
+#pragma once
 
-#include "LogWritter.hpp"
+#include "LogWritter.h"
 
 /*
  * TIPS: Truncate only the file name (not the full path) from __FILE__
@@ -75,5 +74,3 @@
 #define LOG_FILE(type, fileName, line, prettyFunction)      \
         FileLogger(type, fileName, line, prettyFunction)
 #endif
-
-#endif /* LOGGER_H_ */
