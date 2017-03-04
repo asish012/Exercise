@@ -1,4 +1,4 @@
-#include "Database.h"
+#include "Connection.h"
 
 #include "Logger.h"
 #include <sqlite3.h>
@@ -6,7 +6,7 @@
 typedef int (*ResultRowCallback)(UNUSED void *NotUsed, int numberOfColumns, char **values, char **columnName);
 
 int main() {
-    litedb::Database database("exercise.db");
+    litedb::Connection database("exercise.db");
 
     // database.execute("SELECT * FROM Students;");
 

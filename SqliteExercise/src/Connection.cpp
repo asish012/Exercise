@@ -1,4 +1,4 @@
-#include "Database.h"
+#include "Connection.h"
 
 namespace {
 
@@ -20,7 +20,7 @@ const static std::string insertStudent2 = " INSERT INTO Students(id, first_name,
 
 namespace litedb {
 
-Database::Database(const std::string &fileName) : fileName_(fileName)
+Connection::Connection(const std::string &fileName) : fileName_(fileName)
 {
     result_ = sqlite3_open_v2(fileName_.c_str(),
                                &db_,
@@ -39,7 +39,7 @@ Database::Database(const std::string &fileName) : fileName_(fileName)
     insert(insertStudent2);
 }
 
-Database::~Database()
+Connection::~Connection()
 {
     result_ = sqlite3_close(db_);
     if (result_ != SQLITE_OK) {
@@ -47,7 +47,7 @@ Database::~Database()
     }
 }
 
-bool Database::createSchema(const std::string &schema)
+bool Connection::createSchema(const std::string &schema)
 {
     result_ = sqlite3_exec(db_, schema.c_str(), nullptr, nullptr, &error_);
     if (result_ != SQLITE_OK) {
@@ -58,7 +58,7 @@ bool Database::createSchema(const std::string &schema)
     return true;
 }
 
-bool Database::insert(const std::string &query)
+bool Connection::insert(const std::string &query)
 {
     result_ = sqlite3_exec(db_, query.c_str(), nullptr, nullptr, &error_);
     if (result_ != SQLITE_OK) {
@@ -68,7 +68,7 @@ bool Database::insert(const std::string &query)
     return true;
 }
 
-void Database::execute(const std::string &query)
+void Connection::execute(const std::string &query)
 {
     logInfo() << "Query with prepare->step->finalize";
     result_ = sqlite3_prepare_v2(db_, query.c_str(), -1, &stmt_, nullptr);
@@ -102,7 +102,7 @@ void Database::execute(const std::string &query)
     sqlite3_finalize(stmt_);
 }
 
-void Database::execute(const std::string &query, UNUSED int (*callback)(void*,int,char**,char**))
+void Connection::execute(const std::string &query, UNUSED int (*callback)(void*,int,char**,char**))
 {
     logDebug() << "Query with exec";
     result_ = sqlite3_exec(db_, query.c_str(), callback, nullptr, &error_);

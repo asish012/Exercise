@@ -5,10 +5,10 @@
 
 namespace litedb {
 
-class Database {
+class Connection {
 public:
-    explicit Database(const std::string &fileName);
-    ~Database();
+    explicit Connection(const std::string &fileName);
+    ~Connection();
 
     bool createSchema(const std::string &schema);
     bool insert(const std::string &query);
